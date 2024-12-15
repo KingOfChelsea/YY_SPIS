@@ -1,0 +1,37 @@
+/* 只需要重写你需要的即可 */
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  $colors: (
+    'primary': (
+      // 主色
+      'base': #2f7ec6,  // 青花汾酒的主色（例如：一种深蓝色调）
+    ),
+    'success': (
+      // 成功色
+      'base': #27a755,  // 绿色，象征成功与健康
+    ),
+    'warning': (
+      // 警告色
+      'base': #ffbb33,  // 黄色，警示效果
+    ),
+    'danger': (
+      // 危险色
+      'base': #d9534f,  // 红色，警告色
+    ),
+    'error': (
+      // 错误色
+      'base': #e53935,  // 错误色，深红色
+    ),
+    'info': (
+      // 信息色
+      'base': #4f94d4,  // 温暖的蓝色，用来传递信息
+    ),
+    'background': (
+      // 背景色
+      'base': #f7f7f7,  // 浅灰色，干净简洁
+    ),
+    'text': (
+      // 文本色
+      'base': #333333,  // 深灰色，阅读清晰
+    ),
+  )
+)
