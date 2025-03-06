@@ -1,5 +1,5 @@
 <template>
-    <h1>验收入库</h1>
+    1223
 </template>
 
 <script setup lang='ts'>

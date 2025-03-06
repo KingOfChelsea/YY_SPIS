@@ -1,9 +1,8 @@
 // axios基础封装
-
 import axios from "axios";
 
 const httpInstance =  axios.create({
-  baseURL:"http://pcapi-xiaotuxian-front-devtest.itheima.net",
+  baseURL:"http://localhost:49131/api",
   timeout:5000
 })
 
@@ -15,6 +14,7 @@ httpInstance.interceptors.request.use(config => {
 
 // axios响应式拦截器
 httpInstance.interceptors.response.use(res => res.data, e => {
+  
   return Promise.reject(e)
 })
 

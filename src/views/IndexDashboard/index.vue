@@ -1,8 +1,8 @@
 <template>
-    <h1>生成采购单</h1>
+        <h1>仪表板</h1>
 </template>
 
-<script setup lang='ts'>
+<script setup >
 
 </script>
 

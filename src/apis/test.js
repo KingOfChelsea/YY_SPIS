@@ -2,7 +2,7 @@ import httpInstance from "@/utils/http"
 
 export function getCategory(){
  return httpInstance({
-    url:'home/category/head'
+    url:'menus?role_id=1'
   })
 }
 

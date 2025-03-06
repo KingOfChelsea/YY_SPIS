@@ -1,19 +1,19 @@
-// import './assets/main.css'
-import '@/styles/common.scss'
-import '@/styles/var.scss'
+
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
 
-// 测试接口韩式
-import { getCategory } from '@/apis/test'
-getCategory().then(res=>{
-  console.log(res);
-})
+import '@/styles/common.scss'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 const app = createApp(App)
+
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component)
+}
+
 
 app.use(createPinia())
 app.use(router)
