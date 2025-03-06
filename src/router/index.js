@@ -90,34 +90,36 @@ const router = createRouter({
 });
 
 
-// 全局路由守卫
+/**全局路由守卫 Add By Zane Xu 2025-3-6 */
 router.beforeEach(async (to, from, next) => {
   const token = localStorage.getItem('Token');
-
-  // 如果有 token 且目标路由是登录页，则自动重定向到首页 '/'
-  if (token && to.path === '/login') {
+// 有token，调用验证token接口，无过期存储用户资料并且直接进入系统，否则删除过期token。没有token，直接进入login界面
+  if (token) {
     const res = await verifyTokenAPI(token);
     if (res.success) {
       localStorage.setItem('userData', JSON.stringify(res.data));
-      next('/');  // 跳转到首页
-      return;  // 防止后续逻辑执行
-    }else{
+      if (to.path === '/login') {
+        next('/'); // 仅当目标路由是 '/login' 时才跳转到首页
+      } else {
+        next(); // 继续访问目标路由
+      }
+      return; // 确保 `next()` 只调用一次
+    } else {
       localStorage.removeItem('Token');
       localStorage.removeItem('userData');
-      next('/login'); // 跳转到登录页面
+      next('/login'); // Token 无效，跳转到登录页
+      return; // 确保 `next()` 只调用一次
     }
-
-
   }
 
-  // 如果没有 token 且目标路由不是登录页，重定向到登录页
   if (!token && to.path !== '/login') {
-    next('/login');  // 跳转到登录页
-    return;  // 防止后续逻辑执行
+    next('/login'); // 没有 token，跳转到登录页
+    return; // 确保 `next()` 只调用一次
   }
-  // 如果目标路由是登录页或其他有效页面，继续访问
-  next();
+
+  next(); // 允许访问目标页面（如 /login）
 });
+
 
 
 
