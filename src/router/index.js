@@ -1,3 +1,11 @@
+/**
+ * @description:路由接口集成
+ * @return {*}
+ * @Author: Zane Xu
+ * @Date: 2025-03-11 15:27:27
+ * @LastEditTime: Do not edit
+ * @LastEditors: Zane Xu
+ */
 import { createRouter, createWebHistory } from "vue-router";
 import Login from "@/views/Login/index.vue";
 import Layout from "@/views/Layout/index.vue";
@@ -12,7 +20,11 @@ import IndexDashboard from "@/views/IndexDashboard/index.vue"
 import InventoryWarehouse from "@/views/InventoryWarehouse/index.vue"
 import Inventory from "@/views/InventoryAllocation/index.vue"
 import Transfer from "@/views/InventoryTransfer/index.vue"
+import CustomerManagement from "@/views/CustomersMangement/index.vue"
+import SalesOrder from "@/views/SalesOrderManagement/index.vue"
+import SalesQuotation from "@/views/SalesQuotation/index.vue"
 import { verifyTokenAPI } from "@/apis/login/verifyTokenAPI";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -29,55 +41,68 @@ const router = createRouter({
         {
           path: "purchase/create",
           name: "",
-          component: PurchaseCreat, // 创建采购订单
+          component: PurchaseCreat,
         },
         {
           path: "purchase/approve",
           name: "",
-          component: PurchaseApprove, // 默认首页组件
+          component: PurchaseApprove,
         },
         {
           path: "purchase/record",
           name: "",
-          component: PurchaseRecord, // 默认首页组件
+          component: PurchaseRecord,
         },
         {
           path: "purchase/supplier",
           name: "",
-          component: PurchaseSupplier, // 默认首页组件
+          component: PurchaseSupplier, 
         },
         {
           path: "purchase/check",
           name: "",
-          component: PurchaseCheck, // 默认首页组件
+          component: PurchaseCheck,
         },
         {
           path: "product/add",
           name: "",
-          component: ProductAdd, // 默认首页组件
+          component: ProductAdd,
         },
         {
           path: "index/dashboard",
           name: "",
-          component: IndexDashboard, // 默认首页组件
+          component: IndexDashboard,
         },
         {
           path: "inventory/warehouse",
           name: "",
-          component: InventoryWarehouse, // 默认首页组件
+          component: InventoryWarehouse,
         },
         {
           path: "inventory/allocation",
           name: "",
-          component: Inventory, // 默认首页组件
+          component: Inventory,
         },
         {
           path: "inventory/transfer",
           name: "",
-          component: Transfer, // 默认首页组件
+          component: Transfer,
         },
-
-
+        {
+          path: "/sales/customerManage",
+          name: "",
+          component:CustomerManagement,
+        },
+        {
+          path: "/sales/quoted",
+          name: "",
+          component:SalesQuotation,
+        },
+        {
+          path: "/sales/ordermanagement",
+          name: "",
+          component:SalesOrder,
+        },
 
       ],
     },
