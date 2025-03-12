@@ -44,7 +44,7 @@
 
   <!-- 买家信息表格 -->
   <el-card shadow="hover" class="table-card">
-    <el-table :data="customers" border stripe highlight-current-row @row-click="handleRowClick">
+    <el-table :data="CustomerData.CustomersData" border stripe highlight-current-row @row-click="handleRowClick">
       <el-table-column prop="CustomerID" label="ID" width="80" />
       <el-table-column prop="CustomerName" label="买家姓名" width="150" />
       <el-table-column prop="ContactNumber" label="联系方式" width="150" />
@@ -119,7 +119,10 @@ import { Unlock, Lock } from '@element-plus/icons-vue'
 import { updateCustomerAPI } from "@/apis/sales/updateCustomer";
 import { SearchCustomersAPI } from "@/apis/sales/searchCustomer";
 import { ElMessage } from "element-plus";
+import { useCustomersDataStore } from "@/stores/fetchCustomerData";
 
+/** */
+const CustomerData = useCustomersDataStore()
 // **查询条件**
 const searchQuery = ref({
   // CustomerName: "",
@@ -129,29 +132,9 @@ const searchQuery = ref({
   DateRange:[],
 });
 
-// **启用编辑**
-const Edit = ref({
-  IsEdit: true,
-  IsIcon: Lock,
-  type: "success",
-})
 
 // **客户数据**
 const customers = ref([]);
-
-// 筛选后的客户数据
-// const filteredCustomers = computed(() => {
-//   return customers.value.filter(customer => {
-//     return (
-//       (!searchQuery.value.CustomerName || customer.CustomerName.includes(searchQuery.value.CustomerName)) &&
-//       (!searchQuery.value.ContactNumber || customer.ContactNumber.includes(searchQuery.value.ContactNumber)) &&
-//       (!searchQuery.value.Email || customer.Email.includes(searchQuery.value.Email))
-//     );
-//   }).slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value);
-// });
-
-
-
 
 // **分页参数**
 
@@ -160,7 +143,7 @@ const pageSize = ref(10);
 
 // **计算分页数据**
 const paginatedCustomers = computed(() => {
-  return customers.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value);
+  return CustomerData.CustomersData.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value);
 });
 
 // **弹窗控制**
@@ -175,16 +158,16 @@ const handleRowClick = (row) => {
   dialogVisible.value = true;
 };
 
-// **分页变更**
+/**分页变更 Created By Zane Xu 2025-3-12 */
 const handlePageChange = (page) => {
   currentPage.value = page;
 };
 
-// **查询功能**
+/** 查询获取数据（全部客户信息）Created By Zane Xu 2025-3-12 */
 const filterCustomers = async() => {
   try {
     const res = await SearchCustomersAPI(searchQuery.value)
-    console.log(res);
+    // console.log(res);
     if (res.success) {
       customers.value = res.data
       ElMessage.success("查询成功数据覆盖中...")
@@ -195,17 +178,16 @@ const filterCustomers = async() => {
   currentPage.value = 1;
 };
 
-// **重置搜索**
+/**重置搜索 Created By Zane Xu 2025-3-12 */
 const resetSearch = () => {
   searchQuery.value = { CustomerName: "", ContactNumber: "", Email: "" };
   filterCustomers();
 };
 
-// **获取客户数据**
+/**获取全部客户信息 Created By Zane Xu 2025-3-12 */
 const fetchCustomers = async () => {
   try {
-    const res = await fetchCustomersAPI();
-    customers.value = res.data;
+    CustomerData.getCustomerData()
     ElMessage.success("客户数据加载成功!");
   } catch (error) {
     ElMessage.error("获取客户数据失败", error);
@@ -227,7 +209,7 @@ const handleDelete = (row) => {
       // **执行删除**
       const res = await deleteCustomersAPI(row.CustomerID)
       if (res.success) {
-        customers.value = customers.value.filter(c => c.CustomerID !== row.CustomerID);
+        CustomerData.CustomersData = CustomerData.CustomersData.filter(c => c.CustomerID !== row.CustomerID);
         // **如果当前页数据被删光了，跳转到上一页**
         if (filteredCustomers.value.length === 0 && currentPage.value > 1) {
           currentPage.value--;
@@ -269,10 +251,9 @@ const closeDialog = () => {
   dialogVisible.value = false;
 };
 
-
-
-// **初始化数据**
+/**初始化数据 */
 onMounted(fetchCustomers);
+
 </script>
 
 <style scoped>
