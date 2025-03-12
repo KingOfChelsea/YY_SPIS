@@ -116,7 +116,7 @@ const handleLogin = async () => {
   try {
     const res = await AccessLoginTokenAPI(form.captcha, userId.value);
     // 判断响应是否包含token（根据实际API响应结构调整）
-    console.log(res);
+    // console.log(res);
     if (res.success) {
       localStorage.setItem('Token', res.token);  // 使用真实token替换mock值
       ElMessage.success('登录成功');
@@ -126,7 +126,7 @@ const handleLogin = async () => {
       throw new Error('Token不存在于响应中');
     }
   } catch (error) {
-    console.error('登录失败:', error);
+    // console.error('登录失败:', error);
     ElMessage.error(`登录失败: ${error.message || '未知错误'}`);
   }
 }
