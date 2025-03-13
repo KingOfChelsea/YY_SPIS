@@ -113,12 +113,10 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { fetchCustomersAPI } from "@/apis/sales/fetchCustomers"; // 获取客户数据
 import { deleteCustomersAPI } from "@/apis/sales/deleteCustomers";
 import { Unlock, Lock } from '@element-plus/icons-vue'
 import { updateCustomerAPI } from "@/apis/sales/updateCustomer";
 import { SearchCustomersAPI } from "@/apis/sales/searchCustomer";
-import { ElMessage } from "element-plus";
 import { useCustomersDataStore } from "@/stores/fetchCustomerData";
 
 /** */
@@ -196,7 +194,7 @@ const fetchCustomers = async () => {
 
 // **删除客户**
 const handleDelete = (row) => {
-  ElMessage.confirm(
+  ElMessageBox.confirm(
     `确定要删除客户 "${row.CustomerName}" 吗？`,
     "删除确认",
     {
