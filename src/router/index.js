@@ -23,6 +23,7 @@ import Transfer from "@/views/InventoryTransfer/index.vue"
 import CustomerManagement from "@/views/CustomersMangement/index.vue"
 import SalesOrder from "@/views/SalesOrderManagement/index.vue"
 import SalesQuotation from "@/views/SalesQuotation/index.vue"
+import Permission from "@/views/Permission/index.vue"
 import { verifyTokenAPI } from "@/apis/login/verifyTokenAPI";
 
 const router = createRouter({
@@ -56,7 +57,7 @@ const router = createRouter({
         {
           path: "purchase/supplier",
           name: "",
-          component: PurchaseSupplier, 
+          component: PurchaseSupplier,
         },
         {
           path: "purchase/check",
@@ -103,6 +104,11 @@ const router = createRouter({
           name: "",
           component:SalesOrder,
         },
+        {
+          path:"/system/permissions",
+          name:"",
+          component:Permission
+        }
 
       ],
     },
