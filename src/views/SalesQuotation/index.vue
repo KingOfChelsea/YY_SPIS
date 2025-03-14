@@ -2,7 +2,7 @@
  * @Description:
  * @Author: Zane Xu
  * @Date: 2025-03-11 15:11:30
- * @LastEditTime: 2025-03-13 15:19:55
+ * @LastEditTime: 2025-03-14 10:07:09
  * @LastEditors: Zane Xu
 -->
 <template>
@@ -32,29 +32,35 @@
             <el-input v-model="quoteData.phone" readonly placeholder="自动填充客户电话" />
           </el-form-item>
 
-          <!-- 添加报价产品 -->
+          <!--  -----报价单------  -->
           <el-table :data="quoteData.products" border stripe>
-            <el-table-column label="产品" prop="product"width="140" >
+
+            <el-table-column label="产品" prop="product" width="180" >
               <template #default="{ row }">
                 <el-select v-model="row.product" placeholder="选择产品" @change="updatePrice(row)">
-                  <el-option v-for="prod in products" :key="prod.ProductID" :label="prod.ProductName" :value="prod.ProductID" />
+                  <el-option v-for="prod in ProductData.ProductData" :key="prod.ProductID" :label= "`${prod.ProductID}-${prod.ProductName}`" :value="prod.ProductID" />
                 </el-select>
               </template>
             </el-table-column>
 
-            <el-table-column label="单价" prop="price" width="120">
+            <el-table-column label="单价" prop="price" max-width="150">
               <template #default="{ row }">
                 <el-input v-model="row.price" readonly />
               </template>
             </el-table-column>
-
-            <el-table-column label="数量" prop="quantity" width="120">
+            <el-table-column label="单位" prop="unit" max-width="150">
               <template #default="{ row }">
-                <el-input-number v-model="row.quantity" :min="1" @change="calculateTotal" />
+                <el-input v-model="row.unit" readonly />
               </template>
             </el-table-column>
 
-            <el-table-column label="小计" prop="subtotal" width="120">
+            <el-table-column label="数量" prop="quantity" min-width="180"  >
+              <template #default="{ row }">
+                <el-input-number  v-model="row.quantity" :min="1" @change="calculateSubtotal(row)" />
+              </template>
+            </el-table-column>
+
+            <el-table-column label="小计" prop="subtotal" min-width="120">
               <template #default="{ row }">
                 <el-input v-model="row.subtotal" readonly />
               </template>
@@ -71,15 +77,16 @@
 
           <!-- 总价 -->
           <el-form-item label="总价" class="total-price">
-            <el-input  v-model="quoteData.totalPrice" readonly />
+            <el-input style="width: 200px;  " v-model="quoteData.totalPrice" readonly  />
           </el-form-item>
 
           <!-- 操作按钮 -->
           <el-form-item>
             <el-button type="success" @click="submitQuote">提交报价</el-button>
             <el-button type="warning" @click="exportToPDF">导出 PDF</el-button>
-            <el-button type="primary" @click="sendEmail">发送邮件</el-button>
+            <el-button type="primary" @click="">发送邮件</el-button>
           </el-form-item>
+
         </el-form>
       </el-card>
     </el-main>
@@ -90,26 +97,32 @@
 <script setup>
 
 import { useCustomersDataStore } from "@/stores/fetchCustomerData";
+import { GetProductDataStore } from "@/stores/ProductInfo";
 import { ref, reactive, onMounted } from "vue";
 
+/** 客户个人信息（Pinia）Created By Zane Xu 2025-3-13 */
 const CustomerData = useCustomersDataStore()
 
+/** 产品信息（Pina）Created By Zane Xu 2025-3-13 */
+const ProductData =  GetProductDataStore()
+
 const quoteData = reactive({
-  customer: null,
+  customer: null,   // 储存的是客户的ID
   email: "",
   phone: "",
-  products: [],
-  totalPrice: 0
+  products:[],
+  totalPrice:0, // 默认总价
 });
 
-const products = ref([]);
+
 
 // **获取客户 & 产品数据**
 onMounted(async () => {
   CustomerData.getCustomerData()
+  ProductData.GetProductData()
 });
 
-// **更新客户信息**
+/** 更新客户信息 Created By Zane Xu 2025-3-13*/
 const updateCustomerInfo = () => {
   const selectedCustomer = CustomerData.CustomersData.find(cust => cust.CustomerID === quoteData.customer);
   if (selectedCustomer) {
@@ -118,30 +131,38 @@ const updateCustomerInfo = () => {
   }
 };
 
-// **添加产品**
+/** 添加产品 Created By Zane Xu 2025-3-13 */
 const addProduct = () => {
-  quoteData.products.push({ product: null, price: 0, quantity: 1, subtotal: 0 });
+  quoteData.products.push({ product: null,unit:"", price: 0, quantity: 1, subtotal: 0 });
 };
 
-// **更新产品价格**
+/** 更新产品价格 Created By Zane Xu 2025-3-13 */
 const updatePrice = (row) => {
-  const selectedProduct = products.value.find(prod => prod.ProductID === row.product);
-  if (selectedProduct) {
-    row.price = selectedProduct.UnitPrice;
-    row.subtotal = row.price * row.quantity;
-    calculateTotal();
-  }
+  // console.log(row);
+  const selectedOrder = ProductData.ProductData.find(cust => cust.ProductID === row.product)
+  // console.log(selectedOrder);
+  if (selectedOrder) {
+      row.price = selectedOrder.UnitPrice
+      row.unit = selectedOrder.Unit
+      row.subtotal  = row.price * row.quantity
+      calculateSubtotal(row);
+  };
+}
+
+// **计算小计**
+const calculateSubtotal = (row) => {
+  row.subtotal = row.price * row.quantity;
+  calculateTotalPrice();
 };
 
-// **计算总价**
-const calculateTotal = () => {
+/** 计算总价 Created By Zane Xu 2025-3-13 */
+const calculateTotalPrice = () => {
   quoteData.totalPrice = quoteData.products.reduce((sum, item) => sum + item.subtotal, 0);
 };
 
-// **删除产品**
+/** 删除产品  Created By Zane Xu 2025-3-13 */
 const removeProduct = (index) => {
-  quoteData.products.splice(index, 1);
-  calculateTotal();
+
 };
 
 // **提交报价**
@@ -154,19 +175,7 @@ const exportToPDF = () => {
   ElMessage.success("报价单已导出 PDF！");
 };
 
-/**发送邮件*/
-const sendEmail = async () => {
-  try {
-    // const res = await sendQuoteEmailAPI(quoteData);
-    if (res.success) {
-      ElMessage.success("报价单已发送至客户邮箱！");
-    } else {
-      ElMessage.error(res.message);
-    }
-  } catch (error) {
-    ElMessage.error("邮件发送失败：" + error.message);
-  }
-};
+
 </script>
 
 
