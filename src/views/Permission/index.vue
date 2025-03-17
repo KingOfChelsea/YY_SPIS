@@ -115,7 +115,7 @@
 
         <el-table-column label="操作" width="120">
           <template #default="scope">
-            <el-button type="danger" size="small" @click="removeSubPermission(scope.$index)" v-if="formData.SubPermissions.length > 1">删除</el-button>
+            <el-button type="danger" size="small" @click="confirmDelete(scope.$index)" v-if="formData.SubPermissions.length > 1">删除</el-button>
           </template>
         </el-table-column>
 
@@ -147,7 +147,7 @@ import { ref, onMounted } from "vue";
 const permissions = ref([]);
 
 // **对话框控制**
-const dialogVisible = ref(false); 
+const dialogVisible = ref(false);
 const isEdit = ref(false);
 
 // **表单数据**

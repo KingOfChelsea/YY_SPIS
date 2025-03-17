@@ -57,6 +57,7 @@ import { getRoleDataAPI } from "@/apis/roles/getRoles";
 import { getPermissionAPI } from "@/apis/permission/getPermisson";
 import { showNotification } from "@/utils/Ealert";
 import { assignRoleAPI } from "@/apis/permission/assignRoles";
+import { ElMessage } from "element-plus";
 
 
 // ** tree标识 **
@@ -121,10 +122,9 @@ const submitPermissions = async () => {
       RoleID: selectedRole.value,
       PermissionIDs: permissionIDs
     })
-    ElMessage.success("权限分配成功");
-    
+    ElMessage.success(res.message);
   } catch (error) {
-
+    ElMessage.error("错误：",error)
   }
 
   console.log(res.message);

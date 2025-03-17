@@ -25,6 +25,8 @@ import SalesOrder from "@/views/SalesOrderManagement/index.vue"
 import SalesQuotation from "@/views/SalesQuotation/index.vue"
 import Permission from "@/views/Permission/index.vue"
 import Roles from "@/views/Roles/index.vue"
+import Email from "@/views/SaleEmail/index.vue"
+
 import { verifyTokenAPI } from "@/apis/login/verifyTokenAPI";
 
 const router = createRouter({
@@ -114,7 +116,12 @@ const router = createRouter({
           path:"/system/roles",
           name:"",
           component:Roles
-        }
+        },
+        {
+          path:"/sales/email",
+          name:"",
+          component:Email
+        },
 
       ],
     },
