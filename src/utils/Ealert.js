@@ -2,10 +2,9 @@
  * @Description:
  * @Author: Zane Xu
  * @Date: 2025-01-24 12:36:07
- * @LastEditTime: 2025-03-13 16:23:20
+ * @LastEditTime: 2025-03-14 15:13:26
  * @LastEditors: Zane Xu
  */
-import { ElMessage,ElNotification } from 'element-plus';
 
 export function showMessage(type, message) {
   if (type === 'success') {

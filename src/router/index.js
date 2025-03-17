@@ -24,6 +24,7 @@ import CustomerManagement from "@/views/CustomersMangement/index.vue"
 import SalesOrder from "@/views/SalesOrderManagement/index.vue"
 import SalesQuotation from "@/views/SalesQuotation/index.vue"
 import Permission from "@/views/Permission/index.vue"
+import Roles from "@/views/Roles/index.vue"
 import { verifyTokenAPI } from "@/apis/login/verifyTokenAPI";
 
 const router = createRouter({
@@ -108,6 +109,11 @@ const router = createRouter({
           path:"/system/permissions",
           name:"",
           component:Permission
+        },
+        {
+          path:"/system/roles",
+          name:"",
+          component:Roles
         }
 
       ],
