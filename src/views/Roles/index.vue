@@ -91,7 +91,6 @@ const handleCheckChange = (node, checked, indeterminate) => {
       removePermission(node.PermissionID);
     }
   }
-
 };
 
 // **添加权限**
@@ -113,10 +112,6 @@ const submitPermissions = async () => {
   // 获取所有选中的 PermissionID
   const permissionIDs = selectedPermissions.value.map((p) => p.PermissionID);
 
-  // console.log("提交数据", {
-  //   RoleID: selectedRole.value,
-  //   Permissions: permissionIDs
-  // });
   try {
     const res = await assignRoleAPI({
       RoleID: selectedRole.value,
@@ -126,11 +121,8 @@ const submitPermissions = async () => {
   } catch (error) {
     ElMessage.error("错误：",error)
   }
-
-  console.log(res.message);
-
-
 };
+
 /** 获取接口数据 Created By Zane Xu 2025-03-14 */
 onMounted(async () => {
   try {
