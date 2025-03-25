@@ -6,8 +6,8 @@
     </el-header>
 
     <el-main>
-      <el-card >
-       <el-button type="primary" @click="showAddDialog">添加权限</el-button>
+      <el-card>
+        <el-button type="primary" @click="showAddDialog">添加权限</el-button>
         <!-- 添加滚动条 -->
         <el-scrollbar max-height="600px">
           <el-table :data="permissions" row-key="PermissionID" border stripe>
@@ -15,9 +15,12 @@
             <el-table-column type="expand">
               <template #default="{ row }">
                 <el-scrollbar max-height="300px">
-                  <el-table v-if="row.SubPermissions.length > 0" :data="row.SubPermissions" border stripe>
+                  <el-table v-if="Array.isArray(row.SubPermissions) && row.SubPermissions.length > 0"
+                    :data="row.SubPermissions" border stripe>
+                    <el-table-column label="权限编码" prop="PermissionID" min-width="200" />
                     <el-table-column label="子权限名称" prop="PermissionName" min-width="200" />
                     <el-table-column label="路径" prop="Path" min-width="200" />
+
                     <el-table-column label="状态" prop="IsEnabled" width="100">
                       <template #default="{ row }">
                         <el-tag :type="row.IsEnabled ? 'success' : 'danger'">
@@ -37,13 +40,12 @@
             </el-table-column>
 
             <!-- 权限母ID -->
-             <el-table-column label="权限标识" prop="PermissionID" min-width="100">
+            <el-table-column label="权限标识" prop="PermissionID" min-width="100">
 
-             </el-table-column>
+            </el-table-column>
             <!-- 权限名称 -->
             <el-table-column label="权限名称" prop="PermissionName" min-width="200">
               <template #default="{ row }">
-                <el-icon><component :is="row.Icon" /></el-icon>
                 <span class="permission-name">{{ row.PermissionName }}</span>
               </template>
             </el-table-column>
@@ -61,7 +63,7 @@
             </el-table-column>
 
             <!-- 创建时间 -->
-            <el-table-column label="创建时间" prop="CreatedAt" width="180" :formatter="formatDate" />
+            <el-table-column label="创建时间" prop="CreatedAt" width="180" />
 
             <!-- 操作 -->
             <el-table-column label="操作" width="200">
@@ -77,60 +79,69 @@
     </el-main>
 
 
-  <!-- 添加/编辑权限弹窗 -->
-  <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑权限' : '添加权限'" width="700px">
-    <el-form :model="formData" label-width="120px">
-      <!-- 显示父级节点  -->
-      <el-divider  content-position="left">父节点</el-divider>
-      <!-- 权限名称 -->
-      <el-form-item label="权限名称" required>
-        <el-input v-model="formData.PermissionName" />
-      </el-form-item>
+    <!-- 添加/编辑权限弹窗 -->
+    <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑权限' : '添加权限'" width="700px">
+      <el-form :model="formData" label-width="120px">
+        <!-- 显示父级节点  -->
+        <el-divider content-position="left">父节点</el-divider>
 
-      <!-- 路径 -->
-      <el-form-item label="路径" required>
-        <el-input v-model="formData.Path" />
-      </el-form-item>
+        <!-- 编号 -->
+        <el-form-item label="权限编码" v-if="isEdit">
+          <el-input v-model="formData.PermissionID" readonly/>
+        </el-form-item>
 
-      <!-- 状态 -->
-      <el-form-item label="状态">
-        <el-switch v-model="formData.IsEnabled" />
-      </el-form-item>
+        <!-- 权限名称 -->
+        <el-form-item label="权限名称" required>
+          <el-input v-model="formData.PermissionName" />
+        </el-form-item>
 
-      <!-- 子权限表格 -->
-      <el-divider content-position="left">子权限</el-divider>
 
-      <el-table :data="formData.SubPermissions" border stripe>
-        <el-table-column label="名称" prop="PermissionName" min-width="200">
-          <template #default="{ row }">
-            <el-input v-model="row.PermissionName" placeholder="输入子权限名称" />
-          </template>
-        </el-table-column>
+        <!-- 路径 -->
+        <el-form-item label="路径" required>
+          <el-input v-model="formData.Path" />
+        </el-form-item>
 
-        <el-table-column label="路径" prop="Path" min-width="200">
-          <template #default="{ row }">
-            <el-input v-model="row.Path" placeholder="输入路径" />
-          </template>
-        </el-table-column>
+        <!-- 状态 -->
+        <el-form-item label="状态">
+          <el-switch v-model="formData.IsEnabled" />
+        </el-form-item>
 
-        <el-table-column label="操作" width="120">
-          <template #default="scope">
-            <el-button type="danger" size="small" @click="confirmDelete(scope.$index)" v-if="formData.SubPermissions.length > 1">删除</el-button>
-          </template>
-        </el-table-column>
+        <!-- 子权限表格 -->
+        <el-divider content-position="left">子权限</el-divider>
 
-      </el-table>
+        <el-table :data="formData.SubPermissions" border stripe>
+          <el-table-column label="名称" prop="PermissionName" min-width="200">
+            <template #default="{ row }">
+              <el-input v-model="row.PermissionName" placeholder="输入子权限名称" />
+            </template>
+          </el-table-column>
 
-      <el-button type="success" @click="addSubPermission" style="margin-top: 10px;">添加子权限</el-button>
+          <el-table-column label="路径" prop="Path" min-width="200">
+            <template #default="{ row }">
+              <el-input v-model="row.Path" placeholder="输入路径" />
+            </template>
+          </el-table-column>
 
-    </el-form>
+          <el-table-column label="操作" width="120">
+            <template #default="scope">
+              <div style="display: flex; flex-direction: row; justify-content: center;">
+                <el-button type="danger" size="small" @click="confirmDelete(scope.$index)"
+                v-if="formData.SubPermissions.length > 1">删除</el-button>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
 
-    <template #footer>
-      <el-button @click="dialogVisible = false">取消</el-button>
-      <el-button type="primary" @click="submitForm">确认</el-button>
-    </template>
+        <el-button  type="success" @click="addSubPermission" style="margin-top: 10px;">添加子权限</el-button>
 
-  </el-dialog>
+      </el-form>
+
+      <template #footer>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm">确认</el-button>
+      </template>
+
+    </el-dialog>
 
   </el-container>
 </template>
@@ -138,6 +149,7 @@
 
 
 <script setup>
+import { createPermissionAPI } from "@/apis/permission/createPermission";
 import { getPermissionAPI } from "@/apis/permission/getPermisson";
 import { showNotification } from "@/utils/Ealert";
 import { clearFormData } from "@/utils/tools";
@@ -148,14 +160,16 @@ const permissions = ref([]);
 
 // **对话框控制**
 const dialogVisible = ref(false);
+// **编辑 OR 添加 **
 const isEdit = ref(false);
 
 // **表单数据**
 const formData = ref({
+  PermissionID:"",
   PermissionName: "",
   Path: "",
   IsEnabled: true,
-  SubPermissions: [{ PermissionName: "", Path: "" }]
+  SubPermissions: [{PermissionID:"", PermissionName: "", Path: "" }]
 });
 
 
@@ -169,10 +183,16 @@ onMounted(() => {
 const fetchPermissions = async () => {
   try {
     const res = await getPermissionAPI()
-    permissions.value = res.data
-    showNotification("success","数据获取成功！")
+    // console.log(res);
+    if (res.success) {
+      permissions.value = res.data;
+      showNotification("success", "数据获取成功！")
+    }
+    else {
+      showNotification("异常")
+    }
   } catch (error) {
-    showNotification("error",error)
+    showNotification("error", error)
   }
 };
 
@@ -192,7 +212,7 @@ const editPermission = (row) => {
 };
 
 // **提交表单**
-const submitForm = () => {
+const submitForm = async () => {
   if (!formData.value.PermissionName || !formData.value.Path) {
     ElMessage.error("请填写完整信息");
     return;
@@ -206,11 +226,21 @@ const submitForm = () => {
     ElMessage.success("权限修改成功");
   } else {
     // 新增逻辑
-    formData.value.PermissionID = permissions.value.length + 1;
-    permissions.value.push({ ...formData.value });
-    ElMessage.success("权限添加成功");
+    try {
+      // console.log(formData.value);
+      const res = await createPermissionAPI(formData.value)
+      if (res.success) {
+        showNotification("success",res.message)
+        // 重新加载数据 message
+        fetchPermissions()
+      } else {
+        showNotification("error",res.message)
+      }
+    }
+    catch (error) {
+      showNotification("error", error)
+    }
   }
-
   dialogVisible.value = false;
 };
 
@@ -237,15 +267,15 @@ const removeSubPermission = (index) => {
 
 // 添加子权限(dialog种)
 const addSubPermission = () => {
-  formData.value.SubPermissions.push({ PermissionName: "", Path: "" });
+  // formData.value.SubPermissions.push({ PermissionName: "", Path: "" });
 };
 
 
 
-// **格式化时间**
-const formatDate = (row, column, cellValue) => {
-  return cellValue ? cellValue.split("T")[0] : "";
-};
+// // **格式化时间**
+// const formatDate = (row, column, cellValue) => {
+//   return cellValue ? cellValue.split("T")[0] : "";
+// };
 
 </script>
 

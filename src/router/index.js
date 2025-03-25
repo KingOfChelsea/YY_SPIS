@@ -26,7 +26,7 @@ import SalesQuotation from "@/views/SalesQuotation/index.vue"
 import Permission from "@/views/Permission/index.vue"
 import Roles from "@/views/Roles/index.vue"
 import Email from "@/views/SaleEmail/index.vue"
-
+import OrderList from "@/H5/Customers/index.vue"
 import { verifyTokenAPI } from "@/apis/login/verifyTokenAPI";
 
 const router = createRouter({
@@ -129,6 +129,11 @@ const router = createRouter({
       path: "/login",
       name:Login,
       component: Login,
+    },
+    {
+      path: "/H5/",
+      name:"",
+      component: OrderList,
     },
   ],
 });

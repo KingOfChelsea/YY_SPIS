@@ -103,8 +103,6 @@ onMounted(async () => {
       "UnitPrice": "",
       "StockQuantity": ""
     });
-    console.log(ProductData);
-
     products.value = ProductData.data;
   } catch (error) {
     showMessage("error", error);
@@ -147,10 +145,7 @@ const submitForm = async () => {
       } else {
         loading.value = true;
         setTimeout(async () => {
-          console.log('提交的数据:', formData.value);
           const res =  await insertPurchaseordersAPI(formData.value);
-          console.log(res);
-
           loading.value = false;
           showMessage("success", "ID为"+res.PurchaseOrderID+"的"+res.message);
         }, 2000);

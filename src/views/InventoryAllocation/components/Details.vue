@@ -89,30 +89,7 @@ onMounted(async()=>{
 })
 
 
-const warehouses = ref([
-  {
-    WarehouseID: 1,
-    WarehouseName: '祈福缤纷世界(Ozon特货仓库)',
-    Products: [
-      { ProductName: '汾酒牛肉丸', TotalQuantity: 163 },
-      { ProductName: '青花汾酒', TotalQuantity: 100 }
-    ]
-  },
-  {
-    WarehouseID: 2,
-    WarehouseName: '广州商学院（总部仓库）',
-    Products: [
-      { ProductName: '汾酒牛肉丸', TotalQuantity: 30 }
-    ]
-  },
-  {
-    WarehouseID: 3,
-    WarehouseName: '华东仓库',
-    Products: [
-      { ProductName: '汾酒牛筋丸', TotalQuantity: 20 }
-    ]
-  }
-]);
+const warehouses = ref([]);
 
 const queryParams = ref({
   WarehouseID: null,
@@ -126,21 +103,19 @@ const pageSize = ref(5); // 每页显示的记录数
 // 计算过滤后的数据
 const filteredData = computed(() => {
   let result = [];
-
   // 如果指定了仓库ID，则过滤
   if (queryParams.value.WarehouseID) {
     result = warehouses.value.filter(warehouse => warehouse.WarehouseID === queryParams.value.WarehouseID);
   } else {
     result = [...warehouses.value];
   }
-
   return result;
 });
 
 // 分页处理
 function handlePageChange(page) {
   currentPage.value = page;
-  console.log('当前页:', currentPage.value);
+  // console.log('当前页:', currentPage.value);
 }
 
 // 查询数据

@@ -2,7 +2,7 @@
  * @Description:
  * @Author: Zane Xu
  * @Date: 2025-01-24 12:36:07
- * @LastEditTime: 2025-03-14 15:13:26
+ * @LastEditTime: 2025-03-25 15:42:18
  * @LastEditors: Zane Xu
  */
 
@@ -17,6 +17,7 @@ export function showMessage(type, message) {
     ElMessage.info(message); // 默认信息提示
   }
 }
+
 export function showNotification(type,message){
   if (type === 'success') {
     ElNotification({

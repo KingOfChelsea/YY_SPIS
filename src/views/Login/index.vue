@@ -2,7 +2,7 @@
  * @Description:登录页面的实现
  * @Author: Zane Xu
  * @Date: 2024-12-15 11:52:34
- * @LastEditTime: 2025-02-28 16:55:46
+ * @LastEditTime: 2025-03-25 12:54:15
  * @LastEditors: Zane Xu
 -->
 <template>
@@ -16,12 +16,14 @@
 
         <!-- 手机号登录 -->
         <el-form-item prop="username">
-          <el-input v-model="form.username" prefix-icon="el-icon-phone" :disabled="isCaptchaButtonDisabled" placeholder="请输入手机号码" />
+          <el-input v-model="form.username" prefix-icon="el-icon-phone" :disabled="isCaptchaButtonDisabled"
+            placeholder="请输入手机号码" />
         </el-form-item>
 
         <!-- 密码输入框 -->
         <el-form-item prop="password">
-          <el-input v-model="form.password" prefix-icon="el-icon-lock" type="password" :disabled="isCaptchaButtonDisabled" placeholder="请输入密码" />
+          <el-input v-model="form.password" prefix-icon="el-icon-lock" type="password"
+            :disabled="isCaptchaButtonDisabled" placeholder="请输入密码" />
         </el-form-item>
 
         <!-- 验证码输入框 -->
@@ -31,12 +33,8 @@
               <el-input v-model="form.captcha" placeholder="请输入验证码" />
             </el-col>
             <el-col :span="8">
-              <el-button
-                :disabled="isCaptchaButtonDisabled"
-                @click="handleGetCaptcha"
-                class="captcha-btn"
-                style="width: 100%"
-                type="primary">
+              <el-button :disabled="isCaptchaButtonDisabled" @click="handleGetCaptcha" class="captcha-btn"
+                style="width: 100%" type="primary">
                 {{ captchaButtonText }}
               </el-button>
             </el-col>
@@ -74,8 +72,10 @@ const form = reactive({
 
 // 记住密码状态
 const remember = ref(false)
+
 // 当前获取验证码的身份ID
 const userId = ref(null)
+
 // 表单验证规则
 const rules = {
   username: [{ required: true, message: '请输入手机号码', trigger: 'blur' }],
@@ -102,7 +102,6 @@ onMounted(() => {
     countdown = parseInt(savedCountdown)
     isCaptchaButtonDisabled.value = JSON.parse(savedIsDisabled)
     captchaButtonText.value = `${countdown}s`
-
     if (countdown > 0) {
       startTimer()
     }
@@ -120,8 +119,15 @@ const handleLogin = async () => {
     if (res.success) {
       localStorage.setItem('Token', res.token);  // 使用真实token替换mock值
       ElMessage.success('登录成功');
+      // 删除localstore里面的计时和禁用按钮 Add By Xu.ZhenYu 2025-3-18
+      localStorage.removeItem('isCaptchaButtonDisabled')
+      localStorage.removeItem('countdown')
+      // 终止计时器
+      if (timer) {
+        clearInterval(timer);
+      }
       // 路由跳转，替换为你需要跳转的页面路径，例如 '/dashboard'
-      router.push('purchase/create');
+      router.push('/');
     } else {
       throw new Error('Token不存在于响应中');
     }
@@ -141,26 +147,27 @@ const handleGetCaptcha = async () => {
     return
   }
   try {
+    // 重置倒计时为60秒
+    countdown = 60
+
+    // 禁用按钮并开始倒计时
+    isCaptchaButtonDisabled.value = true
+    captchaButtonText.value = `${countdown}s`
+
+    // 将倒计时和按钮禁用状态保存到localStorage
+    localStorage.setItem('isCaptchaButtonDisabled', true)
+    localStorage.setItem('countdown', countdown)
+
+    // 倒计时
+    startTimer()
     const res = await getVerificationCodeAPI({
       Phone: form.username,
       Password: form.password
     })
-    console.log(res);
-
     // true
     if (res.success) {
-      userId.value=res.userId
+      userId.value = res.userId
       ElMessage.success("已发送验证码到个人飞书账号请查验！10分钟内有效")
-      // 禁用按钮并开始倒计时
-      isCaptchaButtonDisabled.value = true
-      captchaButtonText.value = `${countdown}s`
-      // 重置倒计时为60秒
-      countdown = 60
-      // 将倒计时和按钮禁用状态保存到localStorage
-      localStorage.setItem('isCaptchaButtonDisabled', true)
-      localStorage.setItem('countdown', countdown)
-
-      startTimer()
     } else {
       ElMessage.error(res.message)
     }
@@ -169,24 +176,18 @@ const handleGetCaptcha = async () => {
   }
 }
 
-/**
- * [验证码再次获取启动倒计时 Create by 徐振宇2025-2-28]
-  @param 无参数
- */
+/** 验证码再次获取启动倒计时 Create by 徐振宇2025-2-28 */
 const startTimer = () => {
   timer = setInterval(() => {
     countdown--
     captchaButtonText.value = `${countdown}s`
-
     // 每秒更新倒计时，并保存状态
     localStorage.setItem('countdown', countdown)
     localStorage.setItem('isCaptchaButtonDisabled', true)
-
     if (countdown <= 0) {
       clearInterval(timer)
       isCaptchaButtonDisabled.value = false
       captchaButtonText.value = '重新获取'
-
       // 计时结束时清除localStorage的状态
       localStorage.removeItem('countdown')
       localStorage.removeItem('isCaptchaButtonDisabled')
@@ -211,6 +212,7 @@ const startTimer = () => {
     display: flex;
     justify-content: flex-end;
     align-items: center;
+
     img {
       max-width: 400px;
       height: auto;
