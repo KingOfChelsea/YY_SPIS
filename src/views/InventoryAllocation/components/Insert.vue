@@ -80,10 +80,8 @@ async function submitForm() {
     if (res.success) {
       // 成功
       showMessage("success", res.message)
-
       // 重置表单
       clearFormData(form1.value)
-      r
     } else {
       // 失败
       showMessage("warning", res.message)
@@ -92,10 +90,6 @@ async function submitForm() {
     // 报错
     showMessage("error", error)
   }
-
-
-
-
 }
 
 

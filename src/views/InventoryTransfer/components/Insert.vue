@@ -120,7 +120,6 @@ const submitTransfer = () => {
     ElMessage.error("调出仓库和调入仓库不能相同！");
     return;
   }
-
   loading.value = true;
   setTimeout(() => {
     loading.value = false;

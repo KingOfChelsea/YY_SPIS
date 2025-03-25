@@ -105,7 +105,6 @@ const handleSearch = async () => {
   } catch (error) {
     showMessage("error", error);
   }
-
 }
 
 const purchaseOrders = ref([]);

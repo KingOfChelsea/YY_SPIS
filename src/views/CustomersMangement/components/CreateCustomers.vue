@@ -2,7 +2,7 @@
  * @Description:
  * @Author: Zane Xu
  * @Date: 2025-03-11 17:19:48
- * @LastEditTime: 2025-03-11 17:36:19
+ * @LastEditTime: 2025-03-22 13:22:15
  * @LastEditors: Zane Xu
 -->
 <template>
@@ -76,15 +76,13 @@ const customerForm = ref(null);
 // **提交按钮状态**
 const loading = ref(false);
 
-// **提交表单**
+/**创建客户信息 Created By Zane Xu 2025-3-11 */
 const handleSubmit = () => {
   customerForm.value.validate(async (valid) => {
     if (!valid) return;
-
     try {
       loading.value = true;
       const res = await createCustomerAPI(customerData);
-
       if (res.success) {
         ElMessage.success("客户创建成功！");
         resetForm();

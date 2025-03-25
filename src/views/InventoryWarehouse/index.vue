@@ -1,7 +1,5 @@
 <template>
   <el-container>
-
-
     <el-main>
       <el-table :data="warehouses" style="width: 100%">
         <el-table-column prop="WarehouseID" label="仓库ID" width="80"></el-table-column>
