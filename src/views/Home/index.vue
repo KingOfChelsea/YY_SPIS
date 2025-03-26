@@ -21,7 +21,7 @@
             </ul>
           </div>
           <div class="map-container">
-            <img src=""  alt="Зона обслуживания в России" class="service-map">
+            <img style="width: 100px;" src="https://raw.githubusercontent.com/KingOfChelsea/WorkPicGo/main/202503262052852.jpeg"  alt="Зона обслуживания в России" class="service-map">
           </div>
         </div>
       </section>
