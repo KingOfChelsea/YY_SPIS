@@ -33,7 +33,7 @@
                 v-for="product in filteredProducts"
                 :key="product.ProductName"
                 :label="`${product.ProductName} (库存: ${product.TotalQuantity})`"
-                :value="product.ProductName"
+                :value="product.ProductID"
               />
             </el-select>
           </el-form-item>
@@ -60,6 +60,8 @@
 import { ref, reactive, computed, onMounted } from "vue";
 import { queryDisbuteAPI } from "@/apis/warehouse/queryDisbute";
 import { clearFormData } from "@/utils/tools";
+import { commitTransferLogAPI } from "@/apis/warehouse/commitTransfer";
+import { showMessage, showNotification } from "@/utils/Ealert";
 clearFormData
 
 // **仓库列表**
@@ -68,8 +70,6 @@ const warehouses = ref([]);
 // **加载数据**
 onMounted(async () => {
   const res = await queryDisbuteAPI({});
-  console.log(res);
-
   warehouses.value = res.data.map(item => ({
     id: item.WarehouseID,
     name: item.WarehouseName,
@@ -115,17 +115,24 @@ const rules = {
 // **提交调拨申请**
 const loading = ref(false);
 
-const submitTransfer = () => {
+/** 提交调拨记录，等待审核，Add By Zane Xu */
+const submitTransfer = async() => {
   if (transferData.FromWarehouseID === transferData.ToWarehouseID) {
     ElMessage.error("调出仓库和调入仓库不能相同！");
     return;
   }
   loading.value = true;
-  setTimeout(() => {
-    loading.value = false;
-    ElMessage.success("调拨申请提交成功！");
-    resetForm();
-  }, 1500);
+  try {
+    const res =  await commitTransferLogAPI(transferData)
+    if (res.success) {
+      loading.value = false;
+      showNotification("success",res.message)
+    }else{
+      showNotification("warning",res.message)
+    }
+  } catch (error) {
+      showMessage("error",error)
+  }
 };
 
 // **重置表单**
