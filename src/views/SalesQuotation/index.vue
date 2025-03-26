@@ -2,7 +2,7 @@
  * @Description:
  * @Author: Zane Xu
  * @Date: 2025-03-11 15:11:30
- * @LastEditTime: 2025-03-25 17:43:39
+ * @LastEditTime: 2025-03-26 09:09:52
  * @LastEditors: Zane Xu
 -->
 <template>
@@ -180,13 +180,13 @@ const calculateTotalPrice = () => {
 
 /** 删除产品  Created By Zane Xu 2025-3-13 */
 const removeProduct = (index) => {
-
+  quoteData.OrderDetails.splice(index,1)
+  calculateSubtotal()
 };
 
 /** 提交报价并发送至对应客户邮箱 Created By Zane Xu 2025-3-18 */
 
 const submitQuote = async () => {
-
   try {
     // 弹窗
     ElMessageBox.confirm(`是否发送邮件给${CustomerInfo.email}客户`, `${CustomerInfo.email}的邮件`, {
@@ -196,10 +196,9 @@ const submitQuote = async () => {
     )
       .then(async() => {
         const result = await insertSalesOrderAPI(quoteData)
-        // console.log(result);
         const res = await SnedQuotationAPI(CustomerInfo.email,result.orderId)
-        if (res.success) {
-          ElMessage.success(res.message);
+        if (res.success && result.success) {
+          ElMessage.success(`已发送至${CustomerInfo.email}的邮箱！`);
         }
       }).catch((error) => {
         ElMessage({
