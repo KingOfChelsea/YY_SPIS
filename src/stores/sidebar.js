@@ -2,7 +2,7 @@
  * @Description:
  * @Author: Zane Xu
  * @Date: 2024-12-16 10:59:43
- * @LastEditTime: 2025-03-17 11:48:26
+ * @LastEditTime: 2025-03-26 21:15:59
  * @LastEditors: Zane Xu
  */
 import { ref } from 'vue'
@@ -17,10 +17,10 @@ export const useSideBarStore = defineStore('sidebar', () => {
 
   // action 获取导航数据的方式
   const getSideBar = async () => {
-    const res = await getSideBarAPI(1); // 注意这里将 1 转换为字符串 '1'
+    const userInfo = ref(JSON.parse(localStorage.getItem("userData")) || null);
+    console.log(userInfo._rawValue.roleID);
+    const res = await getSideBarAPI(userInfo._rawValue.RoleID);
     SideBarList.value = res;
-    // console.log(res);
-
   };
 return {
   SideBarList,
