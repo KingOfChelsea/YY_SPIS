@@ -145,6 +145,8 @@ router.beforeEach(async (to, from, next) => {
 // 有token，调用验证token接口，无过期存储用户资料并且直接进入系统，否则删除过期token。没有token，直接进入login界面
   if (token) {
     const res = await verifyTokenAPI(token);
+    console.log(res,"token");
+
     if (res.success) {
       localStorage.setItem('userData', JSON.stringify(res.data));
       if (to.path === '/login') {
