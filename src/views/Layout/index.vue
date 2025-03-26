@@ -1,3 +1,10 @@
+<!--
+ * @Description:
+ * @Author: Zane Xu
+ * @Date: 2024-12-15 11:53:47
+ * @LastEditTime: 2025-03-26 15:12:10
+ * @LastEditors: Zane Xu
+-->
 <template>
 
   <header class="header">
@@ -17,9 +24,11 @@
 </template>
 
 <script setup lang='ts'>
+import { useUserStore } from '@/stores/Roles/roles';
 import LayoutHeader from './components/LayoutHeader.vue';
 import LayoutSideBar from './components/LayoutSideBar.vue';
 
+const userStore = useUserStore();
 
 </script>
 
