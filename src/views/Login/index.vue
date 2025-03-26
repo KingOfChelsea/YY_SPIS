@@ -2,11 +2,12 @@
  * @Description:登录页面的实现
  * @Author: Zane Xu
  * @Date: 2024-12-15 11:52:34
- * @LastEditTime: 2025-03-25 12:54:15
+ * @LastEditTime: 2025-03-26 21:46:55
  * @LastEditors: Zane Xu
 -->
 <template>
   <div class="login-container">
+
     <div class="login-img">
       <img src="https://raw.githubusercontent.com/KingOfChelsea/MarkdownPicGo/main/login.png" alt="login" />
     </div>
@@ -46,9 +47,14 @@
 
         <!-- 登录按钮 -->
         <el-button type="primary" @click="handleLogin" style="width: 100%">登录</el-button>
+
       </el-form>
+
     </div>
+
   </div>
+
+
 </template>
 
 <script setup>
@@ -65,8 +71,8 @@ const router = useRouter()
  * 登录表单数据
  */
 const form = reactive({
-  username: '13178822476',
-  password: 'admin123',
+  username: '',
+  password: '',
   captcha: ''
 })
 
@@ -147,25 +153,25 @@ const handleGetCaptcha = async () => {
     return
   }
   try {
-    // 重置倒计时为60秒
-    countdown = 60
-
-    // 禁用按钮并开始倒计时
-    isCaptchaButtonDisabled.value = true
-    captchaButtonText.value = `${countdown}s`
-
-    // 将倒计时和按钮禁用状态保存到localStorage
-    localStorage.setItem('isCaptchaButtonDisabled', true)
-    localStorage.setItem('countdown', countdown)
-
-    // 倒计时
-    startTimer()
     const res = await getVerificationCodeAPI({
       Phone: form.username,
       Password: form.password
     })
     // true
     if (res.success) {
+      // 重置倒计时为60秒
+      countdown = 60
+
+      // 禁用按钮并开始倒计时
+      isCaptchaButtonDisabled.value = true
+      captchaButtonText.value = `${countdown}s`
+
+      // 将倒计时和按钮禁用状态保存到localStorage
+      localStorage.setItem('isCaptchaButtonDisabled', true)
+      localStorage.setItem('countdown', countdown)
+
+      // 倒计时
+      startTimer()
       userId.value = res.userId
       ElMessage.success("已发送验证码到个人飞书账号请查验！10分钟内有效")
     } else {
@@ -203,10 +209,10 @@ const startTimer = () => {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: #2c3e50;
-  background: -webkit-linear-gradient(to right, #3498db, #2c3e50);
-  background: linear-gradient(to right, #3498db, #2c3e50);
   gap: 10px;
+  background-image: url("../../assets/cool-background.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
 
   .login-img {
     display: flex;
