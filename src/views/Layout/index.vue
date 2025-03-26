@@ -2,7 +2,7 @@
  * @Description:
  * @Author: Zane Xu
  * @Date: 2024-12-15 11:53:47
- * @LastEditTime: 2025-03-26 15:12:10
+ * @LastEditTime: 2025-03-26 21:55:27
  * @LastEditors: Zane Xu
 -->
 <template>
@@ -36,7 +36,6 @@ const userStore = useUserStore();
 .header{
   height: 60px;
   width: 100%;
-  /* background-color: aqua; */
   position: absolute;
   left: 0;
   top: 0;
