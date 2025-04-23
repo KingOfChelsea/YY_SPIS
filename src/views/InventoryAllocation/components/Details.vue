@@ -9,33 +9,19 @@
       <el-form :model="queryParams" label-width="120px" class="query-form">
         <el-form-item label="仓库选择">
           <el-select v-model="queryParams.WarehouseID" placeholder="请选择仓库" class="select">
-            <el-option
-              v-for="warehouse in warehouses"
-              :key="warehouse.WarehouseID"
-              :label="warehouse.WarehouseName"
-              :value="warehouse.WarehouseID"
-            />
+            <el-option v-for="warehouse in warehouses" :key="warehouse.WarehouseID" :label="warehouse.WarehouseName"
+              :value="warehouse.WarehouseID" />
           </el-select>
         </el-form-item>
 
         <el-form-item label="开始日期">
-          <el-date-picker
-            v-model="queryParams.StartDate"
-            type="date"
-            placeholder="请选择开始日期"
-            format="YYYY-MM-DD"
-            class="date-picker"
-          />
+          <el-date-picker v-model="queryParams.StartDate" type="date" placeholder="请选择开始日期" format="YYYY-MM-DD"
+            class="date-picker" />
         </el-form-item>
 
         <el-form-item label="结束日期">
-          <el-date-picker
-            v-model="queryParams.EndDate"
-            type="date"
-            placeholder="请选择结束日期"
-            format="YYYY-MM-DD"
-            class="date-picker"
-          />
+          <el-date-picker v-model="queryParams.EndDate" type="date" placeholder="请选择结束日期" format="YYYY-MM-DD"
+            class="date-picker" />
         </el-form-item>
 
         <el-form-item>
@@ -44,37 +30,23 @@
       </el-form>
 
       <!-- 仓库及产品信息表格 -->
-      <el-table
-        :data="filteredData"
-        style="width: 100%"
-        border
-        :height="300"
-        :scrolling="true"
-        :virtual-scroll="true"
-        :row-key="row => row.WarehouseID"
-        class="styled-table"
-      >
-        <el-table-column label="仓库名称" prop="WarehouseName" class="warehouse-column"/>
-
+      <el-table :data="filteredData" style="width: 100%" border :height="300" :scrolling="true" :virtual-scroll="true"
+        :row-key="row => row.WarehouseID" class="styled-table">
+        <el-table-column label="仓库名称" prop="WarehouseName" class="warehouse-column" />
         <el-table-column label="产品信息">
           <template #default="{ row }">
-            <!-- 子表格展示产品信息 -->
-            <el-table :data="row.Products" style="width: 100%" border class="product-table">
-              <el-table-column label="产品名称" prop="ProductName" class="product-name-column"/>
-              <el-table-column label="总数量" prop="TotalQuantity" class="product-quantity-column"/>
+            <el-table :data="row.Products.filter(p => p.TotalQuantity > 0)" style="width: 100%" border
+              class="product-table">
+              <el-table-column label="产品名称" prop="ProductName" class="product-name-column"  sortable=true />
+              <el-table-column label="总数量" prop="TotalQuantity" class="product-quantity-column" sortable=true />
             </el-table>
           </template>
         </el-table-column>
       </el-table>
 
       <!-- 分页 -->
-      <el-pagination
-        :current-page="currentPage"
-        :page-size="pageSize"
-        :total="filteredData.length"
-        @current-change="handlePageChange"
-        class="pagination"
-      />
+      <el-pagination :current-page="currentPage" :page-size="pageSize" :total="filteredData.length"
+        @current-change="handlePageChange" class="pagination" />
     </el-main>
   </el-container>
 </template>
@@ -83,7 +55,7 @@
 import { queryDisbuteAPI } from '@/apis/warehouse/queryDisbute';
 import { ref, computed, onMounted } from 'vue';
 
-onMounted(async()=>{
+onMounted(async () => {
   const res = await queryDisbuteAPI(queryParams.value)
   warehouses.value = res.data
 })
@@ -144,7 +116,8 @@ function filterData() {
   margin-bottom: 10px;
 }
 
-.select, .date-picker {
+.select,
+.date-picker {
   width: 200px;
 }
 
@@ -170,7 +143,8 @@ function filterData() {
   margin-top: 10px;
 }
 
-.product-name-column, .product-quantity-column {
+.product-name-column,
+.product-quantity-column {
   text-align: center;
 }
 

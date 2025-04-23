@@ -11,7 +11,7 @@
           <el-card shadow="hover" class="role-card">
             <h3>选择角色</h3>
             <el-select v-model="selectedRole" placeholder="请选择角色" @change="handleRoleChange" class="full-width">
-              <el-option v-for="role in roles" :key="role.RoleID" :label="role.RoleName" :value="role.RoleID" />
+              <el-option v-for="role in roles" :key="role.RoleID" :label="`${role.RoleID}-${role.RoleName}`" :value="role.RoleID" />
             </el-select>
           </el-card>
         </el-col>

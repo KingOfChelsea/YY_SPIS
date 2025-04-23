@@ -71,7 +71,7 @@ const drawer = ref(false);
 watch(
   () => userStore.userInfo,
   (newUserInfo) => {
-    console.log(newUserInfo, "newUserInfo");
+    // console.log(newUserInfo, "newUserInfo");
     userInfo.value = newUserInfo;
   },
   { immediate: true }
@@ -114,7 +114,7 @@ const messages = [
 
 // 打开侧边栏
 const openSidebar = () => {
-  console.log(drawerVisible.value);
+  // console.log(drawerVisible.value);
   drawerVisible.value = true;
 };
 

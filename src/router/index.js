@@ -27,7 +27,9 @@ import Permission from "@/views/Permission/index.vue"
 import Roles from "@/views/Roles/index.vue"
 import Email from "@/views/SaleEmail/index.vue"
 import OrderList from "@/H5/Customers/index.vue"
+import Sign from "@/views/Sign/index.vue"
 import { verifyTokenAPI } from "@/apis/login/verifyTokenAPI";
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -131,6 +133,11 @@ const router = createRouter({
       component: Login,
     },
     {
+      path: "/sign",
+      name:Sign,
+      component: Sign,
+    },
+    {
       path: "/H5/",
       name:"",
       component: OrderList,
@@ -142,34 +149,44 @@ const router = createRouter({
 /**全局路由守卫 Add By Zane Xu 2025-3-6 */
 router.beforeEach(async (to, from, next) => {
   const token = localStorage.getItem('Token');
-// 有token，调用验证token接口，无过期存储用户资料并且直接进入系统，否则删除过期token。没有token，直接进入login界面
+  console.log('当前 Token:', token);
+
+  // 无需验证 Token 的白名单页面
+  const publicPages = ['/login', '/sign'];
+
+  // 有 token 的情况
   if (token) {
     const res = await verifyTokenAPI(token);
-    console.log(res,"token");
-
     if (res.success) {
       localStorage.setItem('userData', JSON.stringify(res.data));
       if (to.path === '/login') {
-        next('/'); // 仅当目标路由是 '/login' 时才跳转到首页
+        next('/'); // 如果已登录仍访问 login，则跳转首页
       } else {
-        next(); // 继续访问目标路由
+        next(); // 正常访问其他页面
       }
-      return; // 确保 `next()` 只调用一次
+      return;
     } else {
+      // Token 无效，清除并重定向
       localStorage.removeItem('Token');
       localStorage.removeItem('userData');
-      next('/login'); // Token 无效，跳转到登录页
-      return; // 确保 `next()` 只调用一次
+      if (publicPages.includes(to.path)) {
+        next(); // 允许访问 /login 或 /sign
+      } else {
+        next('/login');
+      }
+      return;
     }
   }
 
-  if (!token && to.path !== '/login') {
-    next('/login'); // 没有 token，跳转到登录页
-    return; // 确保 `next()` 只调用一次
+  // 没有 token 的情况
+  if (!token && !publicPages.includes(to.path)) {
+    next('/login'); // 非白名单页面重定向
+    return;
   }
 
-  next(); // 允许访问目标页面（如 /login）
+  next(); // 白名单页面放行
 });
+
 
 
 

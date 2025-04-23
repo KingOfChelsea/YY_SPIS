@@ -1,25 +1,21 @@
+<!--
+ * @Description:
+ * @Author: Zane Xu
+ * @Date: 2024-12-15 15:08:25
+ * @LastEditTime: 2025-04-22 21:43:19
+ * @LastEditors: Zane Xu
+-->
 <template>
-  <el-menu
-    class="el-menu-vertical-demo"
-    :unique-opened="true"
-    :default-openeds="openedMenus"
-  >
+  <el-menu class="el-menu-vertical-demo" :unique-opened="true" :default-openeds="openedMenus">
     <div v-for="(Fitem, Findex) in SideBarStore.SideBarList" :key="Findex">
-      <el-sub-menu
-        :index="`${Findex + 1}`"
-        @click="toggleMenu(Findex + 1)"
-      >
+      <el-sub-menu :index="`${Findex + 1}`" @click="toggleMenu(Findex + 1)">
         <template #title>
-          <el-icon><location /></el-icon>
+            <el-icon><component :is="Fitem.Icon"/></el-icon>
           <span>{{ Fitem.PermissionName }}</span>
         </template>
         <el-menu-item-group :key="Findex + 1" :title="Fitem.PermissionName">
-          <el-menu-item
-            v-for="(item, index) in Fitem.SubMenus"
-            :key="index"
-            :index="`${Findex + 1}-${index + 1}`"
-            @click="goToPage(item)"
-          >
+          <el-menu-item v-for="(item, index) in Fitem.SubMenus" :key="index" :index="`${Findex + 1}-${index + 1}`"
+            @click="goToPage(item)">
             {{ item.PermissionName }}
           </el-menu-item>
         </el-menu-item-group>
@@ -56,4 +52,11 @@ const goToPage = (item) => {
     router.push(`${item.Path}`);
   }
 };
+
+const resolveIcon = (iconName) => {
+  console.log("iconName from DB:", iconName)
+  const fixedName = iconName?.charAt(0).toUpperCase() + iconName?.slice(1)
+  return Icons[fixedName] || Icons['QuestionFilled']
+}
+
 </script>

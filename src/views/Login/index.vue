@@ -2,7 +2,7 @@
  * @Description:登录页面的实现
  * @Author: Zane Xu
  * @Date: 2024-12-15 11:52:34
- * @LastEditTime: 2025-03-26 21:46:55
+ * @LastEditTime: 2025-04-11 22:58:42
  * @LastEditors: Zane Xu
 -->
 <template>
@@ -42,11 +42,15 @@
           </el-row>
         </el-form-item>
 
-        <!-- 记住密码 -->
-        <el-checkbox v-model="remember">记住密码</el-checkbox>
+        <!-- 记住密码
+        <el-checkbox v-model="remember">记住密码</el-checkbox> -->
 
         <!-- 登录按钮 -->
-        <el-button type="primary" @click="handleLogin" style="width: 100%">登录</el-button>
+         <div style="display: flex; justify-content: center;  align-items: center; gap: 5px;">
+          <el-button type="primary" @click="handleLogin" style="width: 100%">登录</el-button>
+          <el-button type="warning " @click="router.push('/sign')" style="width: 100%">注册</el-button>
+         </div>
+
 
       </el-form>
 
@@ -157,6 +161,7 @@ const handleGetCaptcha = async () => {
       Phone: form.username,
       Password: form.password
     })
+    isCaptchaButtonDisabled.value = true
     // true
     if (res.success) {
       // 重置倒计时为60秒
@@ -175,9 +180,11 @@ const handleGetCaptcha = async () => {
       userId.value = res.userId
       ElMessage.success("已发送验证码到个人飞书账号请查验！10分钟内有效")
     } else {
+      isCaptchaButtonDisabled.value = false
       ElMessage.error(res.message)
     }
   } catch (error) {
+    isCaptchaButtonDisabled.value = false
     ElMessage.error("错误" + error)
   }
 }

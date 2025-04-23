@@ -43,33 +43,35 @@
     </el-card>
 
     <el-card class="table-card">
-      <el-table table-layout="fixed"  :data="purchaseOrders" style="width: 100%; "border>
+      <el-table table-layout="fixed" :data="purchaseOrders" style="width: 100%; " border>
         <el-table-column type="expand">
           <template #default="{ row }">
             <el-table :data="row.Details" border>
-              <el-table-column prop="ProductName" label="产品名称" min-width="180"  sortable />
-              <el-table-column prop="Quantity" label="采购数量" width="120" sortable  />
-              <el-table-column prop="SubTotal" label="小计（元）" width="150"  sortable />
+              <el-table-column prop="ProductName" label="产品名称" min-width="180" sortable />
+              <el-table-column prop="Quantity" label="采购数量" width="120" sortable />
+              <el-table-column prop="SubTotal" label="小计（元）" width="150" sortable />
             </el-table>
           </template>
         </el-table-column>
 
-        <el-table-column prop="PurchaseOrderID" label="采购单ID" width="120" sortable  />
+        <el-table-column prop="PurchaseOrderID" label="采购单ID" width="120" sortable />
         <el-table-column prop="CreatedAt" label="创建时间" width="180" sortable />
-        <el-table-column prop="SupplierName" label="供应商" min-width="180"sortable  />
+        <el-table-column prop="SupplierName" label="供应商" min-width="180" sortable />
         <el-table-column prop="EmployeeName" label="创建人" width="120" sortable />
-        <el-table-column prop="Status" label="状态" width="120" sortable >
+        <el-table-column prop="Status" label="状态" width="120" sortable>
           <template #default="{ row }">
             <el-tag :type="getStatusTagType(row.Status)">{{ row.Status }}</el-tag>
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" width="280" sortable>
+        <el-table-column label="操作" width="300" sortable>
           <template #default="{ row }">
             <el-button type="primary" size="small" @click="viewDetails(row)">查看详情</el-button>
             <el-button type="danger" size="small" v-if="row.Status !== '已审核'"
               @click="deleteOrder(row.PurchaseOrderID)">删除</el-button>
-              <el-button size="small" type="warning"  v-if="row.Status !== '已审核'" @click="">审批单</el-button>
+            <el-button size="small" type="warning" v-if="row.Status !== '已审核'" @click="">审批单</el-button>
+            <el-button size="small" v-if="row.Status !== '已入库'" type="success"
+              @click="btnAcceptance(row)">验收</el-button>
           </template>
         </el-table-column>
 
@@ -83,6 +85,7 @@
 import { ref } from "vue";
 import { searchPurchaseRecords } from "@/apis/searchPurchaseRecords"
 import { showMessage } from "@/utils/Ealert";
+import { UpdateStocksAPI } from "@/apis/purchase/updateStocks";
 const searchForm = ref({
   productName: "",
   supplierName: "",
@@ -100,7 +103,7 @@ const handleSearch = async () => {
       EmployeeName: searchForm.value.employeeName,
     };
     const response = await searchPurchaseRecords(params);
-    showMessage("success","查询成功！" );
+    showMessage("success", "查询成功！");
     purchaseOrders.value = response.data;
   } catch (error) {
     showMessage("error", error);
@@ -137,8 +140,6 @@ const viewDetails = (row) => {
   });
 };
 
-
-
 const deleteOrder = (id) => {
   ElMessageBox.confirm("确定删除该采购订单吗？", "删除确认", {
     type: "warning"
@@ -148,6 +149,24 @@ const deleteOrder = (id) => {
   });
 };
 
+const btnAcceptance =  (row) => {
+  ElMessageBox.confirm("确定验收入库吗？(此操作不可回退)", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(async() => {
+    const res = await UpdateStocksAPI(row.PurchaseOrderID)
+    if (res.success) {
+      showMessage("success", res.message)
+    }
+    else {
+      showMessage("error", res.message)
+    }
+  })
+    .catch((error) => {
+      showMessage("error", error)
+    });
+}
 </script>
 
 <style scoped>
@@ -156,6 +175,7 @@ const deleteOrder = (id) => {
   display: flex;
   flex-direction: column;
   justify-content: center;
+
   .search-card {
     overflow: visible;
     margin-bottom: 20px;

@@ -26,7 +26,8 @@
             <el-col :span="6">
               <el-form-item label="来源仓库">
                 <el-select v-model="queryParams.FromWarehouseID" placeholder="选择来源仓库" clearable>
-                  <el-option v-for="warehouse in warehouses" :key="warehouse.id" :label="warehouse.name" :value="warehouse.id" />
+                  <el-option v-for="warehouse in warehouses" :key="warehouse.id" :label="warehouse.name"
+                    :value="warehouse.id" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -34,7 +35,8 @@
             <el-col :span="6">
               <el-form-item label="目标仓库">
                 <el-select v-model="queryParams.ToWarehouseID" placeholder="选择目标仓库" clearable>
-                  <el-option v-for="warehouse in warehouses" :key="warehouse.id" :label="warehouse.name" :value="warehouse.id" />
+                  <el-option v-for="warehouse in warehouses" :key="warehouse.id" :label="warehouse.name"
+                    :value="warehouse.id" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -52,7 +54,8 @@
 
             <el-col :span="12">
               <el-form-item label="时间范围">
-                <el-date-picker v-model="queryParams.DateRange" type="daterange" format="YYYY-MM-DD" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" clearable />
+                <el-date-picker v-model="queryParams.DateRange" type="daterange" format="YYYY-MM-DD" range-separator="至"
+                  start-placeholder="开始日期" end-placeholder="结束日期" clearable />
               </el-form-item>
             </el-col>
 
@@ -67,28 +70,37 @@
       </el-card>
 
       <!-- 表格数据 -->
-      <el-card shadow="hover" class="table-card">
-        <el-table :data="filteredData" highlight-current-row border stripe style="width:100%; overflow-y: auto; height: 300px;">
-          <el-table-column sortable="true" label="调拨 ID" prop="TransferID" width="100" />
-          <el-table-column label="产品名称" prop="ProductName" width="150" />
-          <el-table-column label="来源仓库" prop="FromWarehouseName" min-width="180" />
-          <el-table-column label="目标仓库" prop="ToWarehouseName" min-width="180" />
-          <el-table-column label="调拨数量" prop="Quantity" width="100" align="center" />
-          <el-table-column label="调拨时间" prop="TransferDate" width="180" />
+      <div v-if="filteredData.length > 0">
+        <el-card shadow="hover" class="table-card">
+          <el-table :data="filteredData" highlight-current-row border stripe
+            style="width:100%; overflow-y: auto; height: 300px;">
+            <el-table-column sortable="true" label="调拨 ID" prop="TransferID" width="100" />
+            <el-table-column label="产品名称" prop="ProductName" width="150" />
+            <el-table-column label="来源仓库" prop="FromWarehouseName" min-width="180" />
+            <el-table-column label="目标仓库" prop="ToWarehouseName" min-width="180" />
+            <el-table-column label="调拨数量" prop="Quantity" width="100" align="center" />
+            <el-table-column label="调拨时间" prop="TransferDate" width="180" />
 
-          <!-- 可点击的状态 -->
-          <el-table-column label="状态" prop="Status" width="120">
-            <template #default="{ row }">
-              <el-tag :type="getStatusType(row.Status)" @click="openStatusDialog(row)" class="clickable-status">
-                {{ row.Status }}
-              </el-tag>
-            </template>
-          </el-table-column>
-        </el-table>
+            <!-- 可点击的状态 -->
+            <el-table-column label="状态" prop="Status" width="120">
+              <template #default="{ row }">
+                <el-tag :type="getStatusType(row.Status)" @click="openStatusDialog(row)" class="clickable-status">
+                  {{ row.Status }}
+                </el-tag>
+              </template>
+            </el-table-column>
+          </el-table>
 
-        <!-- 分页 -->
-        <el-pagination :current-page="currentPage" :page-size="pageSize" :total="filteredData.length" @current-change="handlePageChange" layout="prev, pager, next, total" class="pagination" />
-      </el-card>
+          <!-- 分页 -->
+          <el-pagination :current-page="currentPage" :page-size="pageSize" :total="filteredData.length"
+            @current-change="handlePageChange" layout="prev, pager, next, total" class="pagination" />
+        </el-card>
+      </div>
+      <div v-else class="no-order">
+        <el-empty description="未找到订单信息" />
+      </div>
+
+
     </el-main>
 
     <!-- 🔹 状态进度弹窗 -->
@@ -108,7 +120,11 @@
         <p><strong>调拨时间：</strong>{{ currentRow?.TransferDate }}</p>
       </div>
       <template #footer>
-        <el-button type="primary" @click="statusDialogVisible = false">关闭</el-button>
+        <el-button type="primary" :disabled="!canApprove(currentRow?.Status, userRoleId)"
+          @click="btnConsent(currentRow?.TransferID, getConsentType(currentRow?.Status, userRoleId),currentRow?.Status)">
+          {{ getConsentType(currentRow?.Status, userRoleId) }}
+        </el-button>
+        <el-button type="danger" @click="statusDialogVisible = false">关闭</el-button>
       </template>
     </el-dialog>
 
@@ -116,9 +132,13 @@
 </template>
 
 <script setup>
+import { approveTransferLogAPI } from "@/apis/warehouse/approveTransfer";
+import { changeStatusTransferAPI } from "@/apis/warehouse/changeStatusTransfer";
 import { fetchTransferAPI } from "@/apis/warehouse/fetchTransfer";
-import { ref, computed,onMounted} from "vue";
-
+import { useUserStore } from "@/stores/Roles/roles";
+import { showNotification } from "@/utils/Ealert";
+import { ref, computed } from "vue";
+const userStore = useUserStore();
 // **仓库 & 产品数据**
 const warehouses = ref([]);
 const products = ref([]);
@@ -154,7 +174,7 @@ const getStatusType = (status) => {
 
 // **获取当前状态步骤索引**
 const getStepIndex = (status) => {
-  return { Pending: 1, "In Progress": 2, Approved: 3, Completed: 4 }[status] || 0;
+  return { "Pending": 1, "In Progress": 2, "Approved": 3, "Completed": 4 }[status] || 0;
 };
 
 // **打开状态弹窗**
@@ -185,23 +205,57 @@ const resetQuery = () => {
   // fetchTransferRecords();
 };
 
-// **初始化数据**
-onMounted(async () => {
-  // const res = await fetchTransferAPI();
-  // transferRecords.value = res.data;
+//btnConcent按钮,样式权限控制
+const userRoleId = ref(userStore.userInfo.Position); // 示例：经理角色
+// 定义角色ID与审批级别的映射
+const rolePermissionMap = {
+  1: [1],    // 角色ID 1 可以审批主管级别
+  2: [1, 2], // 角色ID 2 可以审批主管和经理级别
+  3: [1, 2, 3] // 角色ID 3 可以审批所有级别
+}
 
-  // 模拟仓库和产品数据
-  warehouses.value = [
-    { id: 1, name: "祈福缤纷世界(Ozon特货仓库)" },
-    { id: 2, name: "广州商学院（总部仓库）" },
-    { id: 3, name: "华东仓库" },
-  ];
-  products.value = [
-    { id: 3, name: "汾酒牛筋丸" },
-    { id: 4, name: "汾酒牛肉丸" },
-    { id: 5, name: "青花汾酒" },
-  ];
-});
+// 定义审批级别文本
+const consentTypeText = {
+  1: "主管审批",
+  2: "经理审批",
+  3: "总经理审批"
+}
+const getConsentType = (status, userRoleId) => {
+  const num = getStepIndex(status);
+  const canApprove = rolePermissionMap[userRoleId]?.includes(num);
+  return canApprove ? consentTypeText[num] || "审批" : "禁止";
+}
+
+const canApprove = (status, userRoleId) => {
+  const num = getStepIndex(status);
+  return rolePermissionMap[userRoleId]?.includes(num);
+}
+const btnConsent = async (TransferID, Name,Status) => {
+  console.log(TransferID, Name);
+  if (Name == "总经理审批") {
+    try {
+    const res = await approveTransferLogAPI({"TransferID":TransferID})
+      if (res.success) {
+        showNotification("success",res.message)
+        statusDialogVisible.value =false;
+        return
+      }
+      showNotification("warning",res.message)
+    } catch (error) {
+        showNotification("error:",error)
+    }
+  }else{
+    //更改状态接口
+    const res = await changeStatusTransferAPI({
+      "TransferID":TransferID,
+      "Status":Status,
+    })
+    showNotification("success",res.message)
+    statusDialogVisible.value =false;
+  }
+
+}
+
 </script>
 
 <style scoped>
@@ -236,4 +290,3 @@ onMounted(async () => {
   line-height: 1.6;
 }
 </style>
-

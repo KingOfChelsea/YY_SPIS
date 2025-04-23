@@ -1,8 +1,15 @@
+/*
+ * @Description:
+ * @Author: Zane Xu
+ * @Date: 2025-03-31 17:34:19
+ * @LastEditTime: 2025-03-31 17:34:51
+ * @LastEditors: Zane Xu
+ */
 // axios基础封装
 import axios from "axios";
 
 const httpInstance =  axios.create({
-  baseURL:"http://localhost:49131/api",
+  baseURL:"https://api-seller.ozon.ru",
   timeout:5000
 })
 

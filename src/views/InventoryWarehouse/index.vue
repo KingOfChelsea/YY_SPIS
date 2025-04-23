@@ -136,6 +136,7 @@ async function saveWarehouse() {
     try {
       // 后端修改
       const res = await updateWarehouseAPI(warehouses.value[existingIndex].WarehouseID, currentWarehouse.value)
+      // console.log(res);
       if (res.success) {
         // 修改仓库信息(前端修改)
         warehouses.value[existingIndex] = { ...currentWarehouse.value };
@@ -258,6 +259,7 @@ function updateLocation(name, lng, lat) {
   showMessage("success", `选中：${name}`)
 }
 
+/** 地图的确定信息 2024-12-20 zane xu */
 function confirmLocation() {
   if (!currentWarehouse.value.Location) {
     showMessage("error", "请先选择一个位置")

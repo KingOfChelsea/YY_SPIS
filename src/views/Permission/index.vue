@@ -252,8 +252,8 @@ const confirmDelete = (row) => {
     type: "warning",
   }).then(() => {
     // deletePermission(row);
-    console.log(row);
-
+    // console.log(row);
+    removeSubPermission(row)
   });
 };
 
@@ -267,15 +267,12 @@ const removeSubPermission = (index) => {
 
 // 添加子权限(dialog种)
 const addSubPermission = () => {
-  // formData.value.SubPermissions.push({ PermissionName: "", Path: "" });
+  formData.value.SubPermissions.push({ PermissionName: "", Path: "" });
 };
 
 
 
-// // **格式化时间**
-// const formatDate = (row, column, cellValue) => {
-//   return cellValue ? cellValue.split("T")[0] : "";
-// };
+
 
 </script>
 

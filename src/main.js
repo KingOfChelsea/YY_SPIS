@@ -1,3 +1,10 @@
+/*
+ * @Description:
+ * @Author: Zane Xu
+ * @Date: 2024-12-15 10:04:19
+ * @LastEditTime: 2025-04-09 21:07:56
+ * @LastEditors: Zane Xu
+ */
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
