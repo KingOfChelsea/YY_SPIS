@@ -1,4 +1,11 @@
 /*
+ * @Description: 
+ * @Author: Zane Xu
+ * @Date: 2024-12-16 10:59:43
+ * @LastEditTime: 2025-04-23 15:31:50
+ * @LastEditors: Zane Xu
+ */
+/*
  * @Description:
  * @Author: Zane Xu
  * @Date: 2024-12-16 10:59:43
@@ -18,7 +25,7 @@ export const useSideBarStore = defineStore('sidebar', () => {
   // action 获取导航数据的方式
   const getSideBar = async () => {
     const userInfo = ref(JSON.parse(localStorage.getItem("userData")) || null);
-    console.log(userInfo._rawValue.roleID);
+    // console.log(userInfo._rawValue.roleID);
     const res = await getSideBarAPI(userInfo._rawValue.RoleID);
     SideBarList.value = res;
   };

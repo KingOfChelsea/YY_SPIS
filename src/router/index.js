@@ -1,3 +1,10 @@
+/*
+ * @Description: 
+ * @Author: Zane Xu
+ * @Date: 2024-12-15 10:04:19
+ * @LastEditTime: 2025-04-23 10:21:08
+ * @LastEditors: Zane Xu
+ */
 /**
  * @description:路由接口集成
  * @return {*}
@@ -28,6 +35,7 @@ import Roles from "@/views/Roles/index.vue"
 import Email from "@/views/SaleEmail/index.vue"
 import OrderList from "@/H5/Customers/index.vue"
 import Sign from "@/views/Sign/index.vue"
+import QuickUpGoods from "@/views/OZON/QuickUpGoods/index.vue"
 import { verifyTokenAPI } from "@/apis/login/verifyTokenAPI";
 
 
@@ -124,7 +132,11 @@ const router = createRouter({
           name:"",
           component:Email
         },
-
+        {
+          path:"/OZON/Upload",
+          name:"",
+          component:QuickUpGoods
+        }
       ],
     },
     {

@@ -2,7 +2,7 @@
   <el-menu class="el-menu-demo" mode="horizontal" :ellipsis="false">
     <!-- Logo -->
     <el-menu-item index="0">
-      <img class="logo" src="https://raw.githubusercontent.com/KingOfChelsea/WorkPicGo/main/202503262052852.jpeg"
+      <img class="logo" src="https://ir.ozone.ru/s3/seller-ui-cdn/seller-ui/logo.svg"
         alt="Element logo" />
     </el-menu-item>
     <el-text>横幅位置</el-text>
@@ -132,7 +132,7 @@ const beforeClose = (done) => {
 
 /* Logo 样式 */
 .logo {
-  width: 70px;
+  width: 200px;
   height: auto;
 }
 
